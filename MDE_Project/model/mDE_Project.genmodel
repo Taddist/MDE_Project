@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel"
+    modelDirectory="/MDE_Project/src-gen" creationIcons="false" editDirectory="/MDE_Project.edit/src-gen"
+    editorDirectory="/MDE_Project.editor/src-gen" modelPluginID="MDE_Project" modelName="MDE_Project"
+    rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container" codeFormatting="true"
+    importerID="org.eclipse.emf.importer.ecore" complianceLevel="8.0" copyrightFields="false"
+    operationReflection="true" importOrganizing="true">
+  <foreignModel>mDE_Project.ecore</foreignModel>
+  <testsDirectory xsi:nil="true"/>
+  <genPackages prefix="MDE_Project" disposableProviderFactory="true" ecorePackage="mDE_Project.ecore#/">
+    <genClasses ecoreClass="mDE_Project.ecore#//Load">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mDE_Project.ecore#//Load/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference mDE_Project.ecore#//Load/actions"/>
+    </genClasses>
+    <genClasses ecoreClass="mDE_Project.ecore#//QueryExpression">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference mDE_Project.ecore#//QueryExpression/specification"/>
+    </genClasses>
+    <genClasses ecoreClass="mDE_Project.ecore#//Add"/>
+    <genClasses ecoreClass="mDE_Project.ecore#//Delete"/>
+    <genClasses ecoreClass="mDE_Project.ecore#//Modify">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mDE_Project.ecore#//Modify/newValueName"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mDE_Project.ecore#//Modify/newValueType"/>
+    </genClasses>
+    <genClasses ecoreClass="mDE_Project.ecore#//Keyword">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mDE_Project.ecore#//Keyword/name"/>
+    </genClasses>
+    <genClasses ecoreClass="mDE_Project.ecore#//Eclass">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference mDE_Project.ecore#//Eclass/columns"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mDE_Project.ecore#//Eclass/relatedTo"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mDE_Project.ecore#//Eclass/boundEclass"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mDE_Project.ecore#//Eclass/boundRelatedTo"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mDE_Project.ecore#//Eclass/typeRelation"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mDE_Project.ecore#//Eclass/type"/>
+    </genClasses>
+    <genClasses ecoreClass="mDE_Project.ecore#//Eattribute">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mDE_Project.ecore#//Eattribute/from"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mDE_Project.ecore#//Eattribute/type"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

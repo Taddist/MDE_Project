@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="ASCII"?>
+<mDE_Project:Load xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mDE_Project="http://www.example.org/mDE_Project" xmi:id="_0KnfAMeuEeeTLdJ7mxPSoA" name="Model1">
+  <actions xsi:type="mDE_Project:Add" xmi:id="_VEQOgMevEeeTLdJ7mxPSoA">
+    <specification xsi:type="mDE_Project:Eclass" xmi:id="_a5OWYM_JEeeFFuNgCVkuyQ" name="c11" relatedTo="" type="Table"/>
+  </actions>
+  <actions xsi:type="mDE_Project:Delete" xmi:id="_30azAM_MEeeFFuNgCVkuyQ"/>
+</mDE_Project:Load>
