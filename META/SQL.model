@@ -1,17 +1,7 @@
 <?xml version="1.0" encoding="ASCII"?>
-<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:sql="http://sql.fr">
-  <sql:Database xmi:id="_qVFpgLj2EeeaAPYt8cjB5g">
-    <cont xmi:id="_sLsl0Lj2EeeaAPYt8cjB5g" name="one"/>
-  </sql:Database>
-  <sql:Table name="Table two"/>
-  <sql:Database name="two"/>
-  <sql:Database name="three">
-    <cont name="one"/>
-  </sql:Database>
-  <sql:Database name="four"/>
-  <sql:Database name="five"/>
-  <sql:Database name="three">
-    <cont name="one"/>
-  </sql:Database>
-  <sql:Database name="five"/>
-</xmi:XMI>
+<sql:Database xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:sql="http://sql.fr" xmi:id="_aOZAoNE9Eeef4JgOE0yy0Q" name="DB1">
+  <cont xmi:id="_dV15wNE9Eeef4JgOE0yy0Q" name="T1">
+    <contC xmi:id="_e-134NE9Eeef4JgOE0yy0Q" name="name"/>
+  </cont>
+  <cont xmi:id="_h7E_gNE9Eeef4JgOE0yy0Q" name="T2"/>
+</sql:Database>

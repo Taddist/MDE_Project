@@ -5,10 +5,13 @@ import com.google.inject.Injector;
 
 import mDE_Project.MDE_ProjectPackage;
 
+import java.io.IOException;
+
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -26,7 +29,7 @@ public class Test {
 	EObject MMracine;
 	static EPackage MMePackage;
 	static Resource MMResource, MResource ;
-	static EObject modelRoot;
+	static EObject modelRoot ,ChangeRoot;
 	
 	public void loadMetaModel(String uri) {
 		//Declaration de la ressource 
@@ -39,20 +42,6 @@ public class Test {
 		MMracine = MMResource.getContents().get(0);
 		MMePackage = (EPackage) MMracine;
 		
-	}
-	
-	
-	public  Resource loadModel(String uri) {
-		ResourceSet resourceSet = new ResourceSetImpl();
-		resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("*", new XMIResourceFactoryImpl());
-	
-		// register the package of our ecore metamodel in the registry list of packages in our resource set
-		String nsUri = MMePackage.getNsURI();
-		resourceSet.getPackageRegistry().put(nsUri,MMePackage);
-		//load our model
-	    Resource load_resource = resourceSet.getResource(URI.createURI(uri),true);
-	    MResource = load_resource;
-	    return MResource;
 	}
 	
 	public static  String name(EObject object) {
@@ -70,6 +59,32 @@ public class Test {
 				System.out.println("********"+att.getName()+" : "+object.eGet(att));
 		}
 	}
+
+	public  EObject loadModel(String uri) {
+		ResourceSet resourceSet = new ResourceSetImpl();
+		resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("*", new XMIResourceFactoryImpl());
+	
+		// register the package of our ecore metamodel in the registry list of packages in our resource set
+		String nsUri = MMePackage.getNsURI();
+		resourceSet.getPackageRegistry().put(nsUri,MMePackage);
+		//load our model
+	    Resource load_resource = resourceSet.getResource(URI.createURI(uri),true);
+	    MResource = load_resource;
+	    EObject ChangeRoot = MResource.getContents().get(0);
+	    System.out.println("------------> TRansformation Model ------------>");
+	    
+	    System.out.println("------------>"+ChangeRoot);
+	    String nameChangeRoot= name(ChangeRoot);
+	    System.out.println("------------>" + nameChangeRoot);
+	    GetAllAttribute(ChangeRoot);
+	    System.out.println("------------> TRansformation Model ------------>");
+	    return ChangeRoot;
+	}
+	
+	
+	
+	
+	
 	
 	public EObject GetFirstContent(EObject object) {
 		EObject keyword =object.eContents().get(0);
@@ -77,7 +92,7 @@ public class Test {
 	}
 	
 	
-	public void SaveEMF(String uri) {
+	public void SaveEMF(String uri) throws IOException  {
 		
 		MDE_ProjectPackage.eINSTANCE.eClass();
 		
@@ -190,18 +205,33 @@ public class Test {
 	
 	public static void main(String[] args) {
 	
-		Test p = new Test();
-		p.SaveEMF("file://////home/taddistafaf/runtime-EclipseXtext/MDETest/MDEtest.mde");
+		Test t = new Test();
+		
+		try {
+			t.SaveEMF("file://////home/taddistafaf/runtime-EclipseXtext/MDETest/MDEtest.mde");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		t.loadMetaModel("file://////home/taddistafaf/MDE_Project/META/SQL.ecore");
+		t.loadModel("file://////home/taddistafaf/MDE_Project/META/SQL.model");
+		
+		
+		System.out.println("99999999999999999999"+ChangeRoot);
 		//String metamodelChange= "file://////home/taddistafaf/MDE_Project/META/"+NameModels(modelRoot)+".ecore";
 		//String modelChange= "file://////home/taddistafaf/MDE_Project/META/"+NameModels(modelRoot)+".model";
-		//p.loadMetaModel(metamodelChange);
-		//p.loadModel(modelChange)
+		//t.loadMetaModel(metamodelChange);
+		//t.loadModel(modelChange)
 		// doesnt work dont know why it return null 
 		//System.out.println("bbbb"+modelRoot);
 		
 		//doesn't work 
 		//System.out.println("------------->"+NameModels(modelRoot));
 		//System.out.println("------------->"+modelRoot);
+		
+		
+		
 		
 	}
 }
