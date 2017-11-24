@@ -5,7 +5,10 @@ import com.google.inject.Injector;
 
 import mDE_Project.MDE_ProjectPackage;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EAttribute;
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -50,6 +53,13 @@ public class Test {
 	    MResource = load_resource;
 	    return MResource;
 	}
+	
+	public  String name(EObject object) {
+		
+		EClass metaClass =object.eClass();
+		String nameMeta= metaClass.getName();
+		return nameMeta;
+	}
 
 	public void SaveEMF(String uri) {
 		
@@ -69,8 +79,52 @@ public class Test {
 		resource = resourceSet2.getResource(emfURI, true);
 		// Resource récupéré de Xtext
 		EcoreUtil.resolveAll(resource);
-		EObject modelRootInj2 = resource.getContents().get(0);
-		System.out.println("------------->" + modelRootInj2);
+		
+		EObject modelRoot = resource.getContents().get(0);
+		System.out.println("------------->" + modelRoot);
+		
+		EList<EObject> all =modelRoot.eContents();
+		
+		for (EObject  one : all) {
+			String name= name(one);
+			
+			
+			if (name.equals("Add")) {
+				System.out.println("-------------> " + "Start Operation  "+ name +"    ---------->");
+				EObject a =one.eContents().get(0);
+				
+				
+				String namemeta= name(a);
+				System.out.println("-------------> " + namemeta +"    ---------->");
+				
+				EClass metaClass =a.eClass();
+				EList<EAttribute> nameMm= metaClass.getEAllAttributes();
+				for (EAttribute  att : nameMm) {
+						System.out.println("********"+att.getName()+" : "+a.eGet(att));
+				}
+			}
+			else if (name.equals("Modify")) {
+				System.out.println("-------------> " + "Start Operation  "+ name +" ------------->");
+				
+			}
+			else if (name.equals("Delete")) {
+				System.out.println("-------------> " + "Start Operation  "+ name +" ------------->");
+				
+			}
+		}
+		
+		
+		/*
+		EList<EAttribute> attributes = eClass.getEAllAttributes();
+		for (EAttribute att : attributes) {
+			if( att.getName()!=null) {
+                System.out.println(att.getName()+" : "+list.eGet(att));		
+		}
+		}
+		
+		*/
+		
+		
 		// launch the APPoc interface
 		
 
