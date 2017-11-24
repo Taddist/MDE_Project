@@ -26,6 +26,7 @@ public class Test {
 	EObject MMracine;
 	static EPackage MMePackage;
 	static Resource MMResource, MResource ;
+	static EObject modelRoot;
 	
 	public void loadMetaModel(String uri) {
 		//Declaration de la ressource 
@@ -41,7 +42,7 @@ public class Test {
 	}
 	
 	
-	public  Resource loadModel2(String uri) {
+	public  Resource loadModel(String uri) {
 		ResourceSet resourceSet = new ResourceSetImpl();
 		resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("*", new XMIResourceFactoryImpl());
 	
@@ -54,13 +55,28 @@ public class Test {
 	    return MResource;
 	}
 	
-	public  String name(EObject object) {
+	public static  String name(EObject object) {
 		
 		EClass metaClass =object.eClass();
 		String nameMeta= metaClass.getName();
 		return nameMeta;
 	}
-
+	
+	public void GetAllAttribute(EObject object) {
+		
+		EClass metaClass =object.eClass();
+		EList<EAttribute> nameMm= metaClass.getEAllAttributes();
+		for (EAttribute  att : nameMm) {
+				System.out.println("********"+att.getName()+" : "+object.eGet(att));
+		}
+	}
+	
+	public EObject GetFirstContent(EObject object) {
+		EObject keyword =object.eContents().get(0);
+		return keyword;
+	}
+	
+	
 	public void SaveEMF(String uri) {
 		
 		MDE_ProjectPackage.eINSTANCE.eClass();
@@ -81,61 +97,111 @@ public class Test {
 		EcoreUtil.resolveAll(resource);
 		
 		EObject modelRoot = resource.getContents().get(0);
-		System.out.println("------------->" + modelRoot);
 		
-		EList<EObject> all =modelRoot.eContents();
+		//String nameRoot= name(modelRoot);
+		//System.out.println("------------->" + nameRoot);
+		System.out.println("------------->"+NameModels(modelRoot));
 		
-		for (EObject  one : all) {
-			String name= name(one);
+		ParseEMF(modelRoot);
+		
+	}
+	
+	public static String NameModels(EObject object) {
+		EClass metaClass =object.eClass();
+		EAttribute nameMm= metaClass.getEAllAttributes().get(0);
+		String name = (String) object.eGet(nameMm);
+		return name;
+		
+	}
+	
+	
+	public void ParseEMF(EObject Root ) {
+			EList<EObject> AllQueryExpression =Root.eContents();
+		
+		for (EObject  oneQueryExpression : AllQueryExpression) {
+			String nameQueryExpression= name(oneQueryExpression);
 			
 			
-			if (name.equals("Add")) {
-				System.out.println("-------------> " + "Start Operation  "+ name +"    ---------->");
-				EObject a =one.eContents().get(0);
+			if (nameQueryExpression.equals("Add")) {
+				System.out.println("-------------> " + "Start Operation  "+ nameQueryExpression +"    ---------->");
+				EObject keyword =GetFirstContent(oneQueryExpression);
 				
 				
-				String namemeta= name(a);
-				System.out.println("-------------> " + namemeta +"    ---------->");
+				String nameKeyword= name(keyword);
+				System.out.println("-------------> " + nameKeyword +"    ---------->");
 				
-				EClass metaClass =a.eClass();
-				EList<EAttribute> nameMm= metaClass.getEAllAttributes();
-				for (EAttribute  att : nameMm) {
-						System.out.println("********"+att.getName()+" : "+a.eGet(att));
+				if(nameKeyword.equals("Eclass")) {
+					
+					GetAllAttribute(keyword);
+				
 				}
-			}
-			else if (name.equals("Modify")) {
-				System.out.println("-------------> " + "Start Operation  "+ name +" ------------->");
+				else if (nameKeyword.equals("Eattribute")) {
+					GetAllAttribute(keyword);
+					
+				}
+				
 				
 			}
-			else if (name.equals("Delete")) {
-				System.out.println("-------------> " + "Start Operation  "+ name +" ------------->");
+			else if (nameQueryExpression.equals("Modify")) {
+				System.out.println("-------------> " + "Start Operation  "+ nameQueryExpression +" ------------->");
+				GetAllAttribute(oneQueryExpression);
+				
+				EObject keyword =GetFirstContent(oneQueryExpression);
+				
+				
+				String nameKeyword= name(keyword);
+				
+				
+				System.out.println("-------------> " + nameKeyword +"    ---------->");
+				
+				if(nameKeyword.equals("Eclass")) {
+					
+					GetAllAttribute(keyword);
+				
+				}
+				else if (nameKeyword.equals("Eattribute")) {
+					GetAllAttribute(keyword);
+					
+				}
+				
+			}
+			else if (nameQueryExpression.equals("Delete")) {
+				System.out.println("-------------> " + "Start Operation  "+ nameQueryExpression +" ------------->");
+				
+				EObject keyword =GetFirstContent(oneQueryExpression);
+				
+				
+				String nameKeyword= name(keyword);
+				System.out.println("-------------> " + nameKeyword +"    ---------->");
+				
+				if(nameKeyword.equals("Eclass")) {
+					
+					GetAllAttribute(keyword);
+				
+				}
+				else if (nameKeyword.equals("Eattribute")) {
+					GetAllAttribute(keyword);
+					
+				}
 				
 			}
 		}
-		
-		
-		/*
-		EList<EAttribute> attributes = eClass.getEAllAttributes();
-		for (EAttribute att : attributes) {
-			if( att.getName()!=null) {
-                System.out.println(att.getName()+" : "+list.eGet(att));		
-		}
-		}
-		
-		*/
-		
-		
-		// launch the APPoc interface
-		
-
 	}
 	
 	public static void main(String[] args) {
 	
 		Test p = new Test();
-		p.loadMetaModel("file:///////home/taddistafaf/MDE_Project/MDE_Project/model/mDE_Project.ecore");
-		
 		p.SaveEMF("file://////home/taddistafaf/runtime-EclipseXtext/MDETest/MDEtest.mde");
+		//String metamodelChange= "file://////home/taddistafaf/MDE_Project/META/"+NameModels(modelRoot)+".ecore";
+		//String modelChange= "file://////home/taddistafaf/MDE_Project/META/"+NameModels(modelRoot)+".model";
+		//p.loadMetaModel(metamodelChange);
+		//p.loadModel(modelChange)
+		// doesnt work dont know why it return null 
+		//System.out.println("bbbb"+modelRoot);
+		
+		//doesn't work 
+		//System.out.println("------------->"+NameModels(modelRoot));
+		//System.out.println("------------->"+modelRoot);
 		
 	}
 }
