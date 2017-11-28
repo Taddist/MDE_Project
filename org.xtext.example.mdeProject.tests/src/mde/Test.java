@@ -5,6 +5,8 @@ import com.google.inject.Injector;
 
 import mDE_Project.MDE_ProjectPackage;
 
+import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 
 import org.eclipse.emf.common.util.EList;
@@ -30,6 +32,7 @@ public class Test {
 	static EPackage MMePackage;
 	static Resource MMResource, MResource ;
 	static EObject modelRoot ,ChangeRoot;
+	static String metamodelChange,modelChange;
 	
 	public void loadMetaModel(String uri) {
 		//Declaration de la ressource 
@@ -51,10 +54,12 @@ public class Test {
 		return nameMeta;
 	}
 	
+	//Get all the value of the attributes of the object in argument
 	public void GetAllAttribute(EObject object) {
 		
 		EClass metaClass =object.eClass();
 		EList<EAttribute> nameMm= metaClass.getEAllAttributes();
+		// we can eliminate this part of for and add it in add function and return simply the Elist of attribute
 		for (EAttribute  att : nameMm) {
 				System.out.println("********"+att.getName()+" : "+object.eGet(att));
 		}
@@ -70,7 +75,7 @@ public class Test {
 		//load our model
 	    Resource load_resource = resourceSet.getResource(URI.createURI(uri),true);
 	    MResource = load_resource;
-	    EObject ChangeRoot = MResource.getContents().get(0);
+	    ChangeRoot = MResource.getContents().get(0);
 	    System.out.println("------------> TRansformation Model ------------>");
 	    
 	    System.out.println("------------>"+ChangeRoot);
@@ -111,16 +116,14 @@ public class Test {
 		// Resource récupéré de Xtext
 		EcoreUtil.resolveAll(resource);
 		
-		EObject modelRoot = resource.getContents().get(0);
+		modelRoot = resource.getContents().get(0);
+
 		
-		//String nameRoot= name(modelRoot);
-		//System.out.println("------------->" + nameRoot);
-		System.out.println("------------->"+NameModels(modelRoot));
-		
-		ParseEMF(modelRoot);
 		
 	}
-	
+	/*
+	 This function takes as argument an object that have  a single attribute name and return its value(string)
+	 */
 	public static String NameModels(EObject object) {
 		EClass metaClass =object.eClass();
 		EAttribute nameMm= metaClass.getEAllAttributes().get(0);
@@ -129,78 +132,120 @@ public class Test {
 		
 	}
 	
-	
+	//Make a list for errors to print it later 
 	public void ParseEMF(EObject Root ) {
+			//Get all the QueryExpressions
 			EList<EObject> AllQueryExpression =Root.eContents();
 		
+			System.out.println("-----------------------------------Start Parsing---------------------------------------");
 		for (EObject  oneQueryExpression : AllQueryExpression) {
+			//Get the name of the current QueryExpression(ADD,MODIFY,DELETE)
 			String nameQueryExpression= name(oneQueryExpression);
 			
+			//Get the keyword(ECLASS,EATTRIBUTE)
+			EObject keyword =GetFirstContent(oneQueryExpression);
 			
+			//Get the name of the keyword
+			String nameKeyword= name(keyword);
+			
+			//Get all the attributes of the keyword and their values
+			//take the comment off if we made this function return a Elist 
+			//GetAllAttribute(keyword);
+			
+			//case 1 : Adding
 			if (nameQueryExpression.equals("Add")) {
-				System.out.println("-------------> " + "Start Operation  "+ nameQueryExpression +"    ---------->");
-				EObject keyword =GetFirstContent(oneQueryExpression);
+				System.out.println("######  " + " Start Operation ' "+ nameQueryExpression +" ' ###### ");
 				
+				System.out.println("------------- " + nameKeyword +"   ----------");
 				
-				String nameKeyword= name(keyword);
-				System.out.println("-------------> " + nameKeyword +"    ---------->");
-				
+				//case 1.1 : Eclass
 				if(nameKeyword.equals("Eclass")) {
-					
+					//Get all the attributes of the keyword and their values
 					GetAllAttribute(keyword);
-				
+					//Add the object in the  target model
+					//Check if the object doesn't exist in the target model
+					
 				}
+				//case 1.2 : Eattribute
 				else if (nameKeyword.equals("Eattribute")) {
+					//Get all the attributes of the keyword and their values
 					GetAllAttribute(keyword);
-					
+					//Add the object in the target model
+					//Check if the object doesn't exist in the target model
 				}
-				
-				
 			}
+			//case 2 : Modifying
 			else if (nameQueryExpression.equals("Modify")) {
-				System.out.println("-------------> " + "Start Operation  "+ nameQueryExpression +" ------------->");
+				System.out.println("######  " + " Start Operation ' "+ nameQueryExpression +" ' ###### ");
+				
+				//Get all the attributes of "Modify"  and their values 
 				GetAllAttribute(oneQueryExpression);
 				
-				EObject keyword =GetFirstContent(oneQueryExpression);
-				
-				
-				String nameKeyword= name(keyword);
-				
-				
-				System.out.println("-------------> " + nameKeyword +"    ---------->");
+			
+				System.out.println("------------- " + nameKeyword +"   ----------");
 				
 				if(nameKeyword.equals("Eclass")) {
-					
+					//Get all the attributes of the keyword and their values
 					GetAllAttribute(keyword);
-				
+					//Modify the object in the  target model
+					//Check if the object exists in the target model
 				}
 				else if (nameKeyword.equals("Eattribute")) {
+					//Get all the attributes of the keyword and their values
 					GetAllAttribute(keyword);
-					
+					//Modify the object in the  target model
+					//Check if the object exists in the target model
 				}
 				
 			}
+			//case 3 : Deleting
 			else if (nameQueryExpression.equals("Delete")) {
-				System.out.println("-------------> " + "Start Operation  "+ nameQueryExpression +" ------------->");
+				System.out.println("######  " + " Start Operation ' "+ nameQueryExpression +" ' ###### ");
 				
-				EObject keyword =GetFirstContent(oneQueryExpression);
-				
-				
-				String nameKeyword= name(keyword);
+
 				System.out.println("-------------> " + nameKeyword +"    ---------->");
 				
 				if(nameKeyword.equals("Eclass")) {
-					
+					//Get all the attributes of the keyword and their values
 					GetAllAttribute(keyword);
+					//Delete the object in the  target model
+					//Check if the object exists in the target model
 				
 				}
 				else if (nameKeyword.equals("Eattribute")) {
+					//Get all the attributes of the keyword and their values
 					GetAllAttribute(keyword);
-					
+					//Delete the object in the  target model
+					//Check if the object exists in the target model
 				}
 				
 			}
 		}
+		System.out.println("-----------------------------------End Parsing---------------------------------------");
+	}
+	
+	public void Path() {
+		// Getting the path of the project 
+		File file = new File(System.getProperty("user.dir"));
+		String parentPath = file.getAbsoluteFile().getParent();
+		String fullPath = "file://////"+ parentPath+"/META/"+NameModels(modelRoot);
+		
+		/*
+		 *  Failed test
+		 *  Test if fullPath-NameModels(modelRoot) exists 
+		 *  
+		 */
+		
+		//Setting the full path of the Metamodel and model
+		metamodelChange= fullPath +".ecore";
+		modelChange= fullPath +".model";
+	}
+	
+	public void LoadTarget() {
+		//Load Metamodel and model 
+		loadMetaModel(metamodelChange);
+		loadModel(modelChange);
+		
 	}
 	
 	public static void main(String[] args) {
@@ -208,32 +253,25 @@ public class Test {
 		Test t = new Test();
 		
 		try {
+			//Transform the wtext to emf 
 			t.SaveEMF("file://////home/taddistafaf/runtime-EclipseXtext/MDETest/MDEtest.mde");
+			
+			//Get the full path of the Metamodel and model
+			t.Path();
+			
+			//Load Target Metamodel and model 
+			t.LoadTarget();
+			
+			//Parse the model of the changement and make the changes in the target model 
+			t.ParseEMF(modelRoot);
+			
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-/*
-		t.loadMetaModel("file://////home/taddistafaf/Desktop/MDE_Project-master/META/SQL.ecore");
-		t.loadModel("file://////home/taddistafaf/Desktop/MDE_Project-master/META/SQL.model");
-
-		t.loadMetaModel("file://////home/taddistafaf/MDE_Project/META/SQL.ecore");
-		t.loadModel("file://////home/taddistafaf/MDE_Project/META/SQL.model");
-*/
 		
-		
-		System.out.println("99999999999999999999"+ChangeRoot);
-		//String metamodelChange= "file://////home/taddistafaf/MDE_Project/META/"+NameModels(modelRoot)+".ecore";
-		//String modelChange= "file://////home/taddistafaf/MDE_Project/META/"+NameModels(modelRoot)+".model";
-		//t.loadMetaModel(metamodelChange);
-		//t.loadModel(modelChange)
-		// doesnt work dont know why it return null 
-		//System.out.println("bbbb"+modelRoot);
-		
-		//doesn't work 
-		//System.out.println("------------->"+NameModels(modelRoot));
-		//System.out.println("------------->"+modelRoot);
 		
 		
 		
