@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="ASCII"?>
+<mDE_Project:Load xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mDE_Project="http://www.example.org/mDE_Project" xmi:id="_ypBAAMB0EeeCzJnmNaZuvQ" name="Model1">
+  <actions xsi:type="mDE_Project:Add" xmi:id="_4ZvBcMB0EeeCzJnmNaZuvQ">
+    <specification xsi:type="mDE_Project:Eclass" xmi:id="_5EFmAMB0EeeCzJnmNaZuvQ" name="Class1" type="Table">
+      <columns xmi:id="_7O1mUMB0EeeCzJnmNaZuvQ" name="Attribute1" type="String"/>
+    </specification>
+  </actions>
+  <actions xsi:type="mDE_Project:Add" xmi:id="_-dAygMB0EeeCzJnmNaZuvQ">
+    <specification xsi:type="mDE_Project:Eattribute" xmi:id="__A47oMB0EeeCzJnmNaZuvQ" name="Attribute2" from="Class1" type="int"/>
+  </actions>
+  <actions xsi:type="mDE_Project:Delete" xmi:id="_BxCvEMB1EeeCzJnmNaZuvQ">
+    <specification xsi:type="mDE_Project:Eattribute" xmi:id="_CV9aAMB1EeeCzJnmNaZuvQ" name="Attribute1" from="Class1"/>
+  </actions>
+  <actions xsi:type="mDE_Project:Modify" xmi:id="_FrbhAMB1EeeCzJnmNaZuvQ" newValueName="attribute3" newValueType="string">
+    <specification xsi:type="mDE_Project:Eattribute" xmi:id="_HixdIMB1EeeCzJnmNaZuvQ" name="Attribute2" type=""/>
+  </actions>
+</mDE_Project:Load>
