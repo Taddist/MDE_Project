@@ -214,8 +214,13 @@ public class Test {
 			e.printStackTrace();
 		}
 		
+/*
 		t.loadMetaModel("file://////home/taddistafaf/Desktop/MDE_Project-master/META/SQL.ecore");
 		t.loadModel("file://////home/taddistafaf/Desktop/MDE_Project-master/META/SQL.model");
+
+		t.loadMetaModel("file://////home/taddistafaf/MDE_Project/META/SQL.ecore");
+		t.loadModel("file://////home/taddistafaf/MDE_Project/META/SQL.model");
+*/
 		
 		
 		System.out.println("99999999999999999999"+ChangeRoot);
