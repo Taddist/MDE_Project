@@ -6,8 +6,12 @@ import com.google.inject.Injector;
 import mDE_Project.MDE_ProjectPackage;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Set;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
@@ -33,6 +37,8 @@ public class Test {
 	static Resource MMResource, MResource ;
 	static EObject modelRoot ,ChangeRoot;
 	static String metamodelChange,modelChange;
+	static Hashtable attributeValue , attributeValueM;
+	
 	
 	public void loadMetaModel(String uri) {
 		//Declaration de la ressource 
@@ -54,15 +60,88 @@ public class Test {
 		return nameMeta;
 	}
 	
+	public void saveResource(){
+		try{
+			MResource.save(null);
+			System.out.println("Après sauvegarde de la resource");
+		}
+		catch (IOException e){
+			System.err.println("Erreur lors de la sauvegarde de la resource");
+			e.printStackTrace();
+		
+		}
+	}
+	
+	
+	//Print all the value of the attributes of the object in argument
+		public void GetAllAttribute(EObject object) {
+			
+			EClass metaClass =object.eClass();
+			EList<EAttribute> nameMm= metaClass.getEAllAttributes();
+			
+			// we can eliminate this part of for and add it in add function and return simply the Elist of attribute
+			for (EAttribute  att : nameMm) {
+					System.out.println("********"+att.getName()+" : "+object.eGet(att));
+					
+			}
+		}
+
+	
 	//Get all the value of the attributes of the object in argument
-	public void GetAllAttribute(EObject object) {
+	public Hashtable HashtableAllAttribute(EObject object) {
 		
 		EClass metaClass =object.eClass();
 		EList<EAttribute> nameMm= metaClass.getEAllAttributes();
-		// we can eliminate this part of for and add it in add function and return simply the Elist of attribute
+		
+		Hashtable ht = new Hashtable();
+		
+		
 		for (EAttribute  att : nameMm) {
-				System.out.println("********"+att.getName()+" : "+object.eGet(att));
+				if(object.eGet(att) == null)
+				{
+					//System.out.println("NUUUUUUUUUUUUUUUUUUUUUUL");
+					
+				}
+				else {
+					//System.out.println("+++++++++++++++++++++++++"+att.getName()+" : "+object.eGet(att));
+					ht.put(att.getName(),object.eGet(att));
+				}
+				
 		}
+		/*
+		System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+		 Enumeration e = ht.elements();
+
+
+		    while(e.hasMoreElements())
+
+		      System.out.println(e.nextElement());
+		*/
+		return ht;
+	}
+	
+	//Get all the value of the attributes of the object in argument
+	public Hashtable HashtableAllAttributeM(EObject object) {
+		
+		EClass metaClass =object.eClass();
+		EList<EAttribute> nameMm= metaClass.getEAllAttributes();
+		
+		Hashtable ht = new Hashtable();
+		
+		for (EAttribute  att : nameMm) {
+				if(object.eGet(att) == null)
+				{
+					ht.put(att.getName(),"nul");
+					
+				}
+				else {
+					//System.out.println("+++++++++++++++++++++++++"+att.getName()+" : "+object.eGet(att));
+					ht.put(att.getName(),object.eGet(att));
+				}
+				
+		}
+	
+		return ht;
 	}
 
 	public  EObject loadModel(String uri) {
@@ -131,7 +210,68 @@ public class Test {
 		return name;
 		
 	}
-	
+	 //AddEclass
+	 public void AddEclass(Hashtable hash) {
+		 EList<EClassifier> eClassifiers = MMePackage.getEClassifiers();
+		 String nameeclass=(String) hash.get("type");
+	     
+		    for (EClassifier eClassifier : eClassifiers) {
+		        if (eClassifier.getName().equals(nameeclass)) {
+		         if (eClassifier instanceof EClass) {
+			            EClass eClass = (EClass) eClassifier;
+			            EObject databasenstance = MMePackage.getEFactoryInstance().create(
+					            eClass);
+			            EList<EAttribute> eAttributes = eClass.getEAttributes();
+			 for (EAttribute eAttribute : eAttributes) {
+			         EAttribute eName = (EAttribute) eClass
+			            			.getEStructuralFeature(eAttribute.getName());
+			         String value=(String) hash.get(eAttribute.getName());
+			         databasenstance.eSet(eName, value);
+		    
+		    }
+			 MResource.getContents().add(databasenstance);
+			 
+			        }
+		         
+		        }
+		    }
+		    
+	 }
+	 
+	 
+	 public void ModifyEclass(Hashtable h) {
+		 
+			for(Iterator<EObject> ai= MResource.getAllContents(); ai.hasNext(); ) {
+				EObject object =(EObject) ai.next();
+				EClass eClass =object.eClass();
+				
+				if (eClass.getName().equals(h.get("type"))) {
+					EAttribute Name = (EAttribute) eClass.getEStructuralFeature("name");
+					EAttribute Type = (EAttribute) eClass.getEStructuralFeature("type");
+					
+					if (h.get("name").equals(object.eGet(Name)))
+					{
+						if(h.get("newValueName")!="nul") {
+							String value = (String) h.get("newValueName");
+							object.eSet(Name, value);
+					
+						}
+						
+						System.out.println(h.get("newValueType"));
+						String type = (h.get("newValueType")).getClass().getName();
+						System.out.println(type);
+						
+						
+						if (h.get("newValueType")!="nul"){
+							String value = (String) h.get("newValueType");
+							object.eSet(Type, value);
+						
+						}
+						
+					}
+				}
+			}		
+	}
 	//Make a list for errors to print it later 
 	public void ParseEMF(EObject Root ) {
 			//Get all the QueryExpressions
@@ -161,7 +301,9 @@ public class Test {
 				//case 1.1 : Eclass
 				if(nameKeyword.equals("Eclass")) {
 					//Get all the attributes of the keyword and their values
-					GetAllAttribute(keyword);
+					GetAllAttribute(keyword);	
+					attributeValue = HashtableAllAttribute(keyword);
+					AddEclass(attributeValue);
 					//Add the object in the  target model
 					//Check if the object doesn't exist in the target model
 					
@@ -169,7 +311,7 @@ public class Test {
 				//case 1.2 : Eattribute
 				else if (nameKeyword.equals("Eattribute")) {
 					//Get all the attributes of the keyword and their values
-					GetAllAttribute(keyword);
+					//GetAllAttribute(keyword);
 					//Add the object in the target model
 					//Check if the object doesn't exist in the target model
 				}
@@ -181,18 +323,41 @@ public class Test {
 				//Get all the attributes of "Modify"  and their values 
 				GetAllAttribute(oneQueryExpression);
 				
-			
+				attributeValueM = new Hashtable();
+				 
 				System.out.println("------------- " + nameKeyword +"   ----------");
 				
+				
 				if(nameKeyword.equals("Eclass")) {
+					
 					//Get all the attributes of the keyword and their values
 					GetAllAttribute(keyword);
+					
+					
+					
+					 Set<String> keySetQuery = new HashSet<String>();
+					 keySetQuery.addAll((HashtableAllAttributeM(oneQueryExpression)).keySet());
+				     Set<String> keySetEclass = new HashSet<String>();
+				     keySetEclass.addAll((HashtableAllAttributeM(keyword)).keySet());
+				     
+				     
+				     for (String key : keySetQuery) {
+					     attributeValueM.put(key, (HashtableAllAttributeM(oneQueryExpression)).get(key));
+				     }
+				     
+				     for (String key : keySetEclass) {
+				    	 attributeValueM.put(key, (HashtableAllAttributeM(keyword)).get(key));
+				     }
+				     
+				     ModifyEclass(attributeValueM);
+				     
+					
 					//Modify the object in the  target model
 					//Check if the object exists in the target model
 				}
 				else if (nameKeyword.equals("Eattribute")) {
 					//Get all the attributes of the keyword and their values
-					GetAllAttribute(keyword);
+					//GetAllAttribute(keyword);
 					//Modify the object in the  target model
 					//Check if the object exists in the target model
 				}
@@ -207,14 +372,14 @@ public class Test {
 				
 				if(nameKeyword.equals("Eclass")) {
 					//Get all the attributes of the keyword and their values
-					GetAllAttribute(keyword);
+					//GetAllAttribute(keyword);
 					//Delete the object in the  target model
 					//Check if the object exists in the target model
 				
 				}
 				else if (nameKeyword.equals("Eattribute")) {
 					//Get all the attributes of the keyword and their values
-					GetAllAttribute(keyword);
+					//GetAllAttribute(keyword);
 					//Delete the object in the  target model
 					//Check if the object exists in the target model
 				}
@@ -253,7 +418,7 @@ public class Test {
 		Test t = new Test();
 		
 		try {
-			//Transform the wtext to emf 
+			//Transform the xtext to emf 
 			t.SaveEMF("file://////home/taddistafaf/runtime-EclipseXtext/MDETest/MDEtest.mde");
 			
 			//Get the full path of the Metamodel and model
@@ -265,16 +430,34 @@ public class Test {
 			//Parse the model of the changement and make the changes in the target model 
 			t.ParseEMF(modelRoot);
 			
+			t.saveResource();
+			
+			
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
+		/*
+	    Enumeration e = attributeValue.elements();
+
+	    while(e.hasMoreElements())
+	      System.out.println(e.nextElement());
+
+	    System.out.println("++++++++++++++++++++++++++++++++");
+	    System.out.println(attributeValue.get("type"));
 		
-		
-		
-		
-		
+		*/
+		/*
+		Hashtable ht = new Hashtable();
+		ht.put("name", "c1");
+		ht.put("relatedTo", "c2");
+		ht.put("boundEclass", "1..*");
+		ht.put("boundRelatedTo", "1..*");
+		ht.put("typeRelation", "compose");
+		ht.put("type", "Table");
+		*/
 	}
 }
+

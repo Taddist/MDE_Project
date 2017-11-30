@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="ASCII"?>
-<sql:Database xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:sql="http://sql.fr" xmi:id="_aOZAoNE9Eeef4JgOE0yy0Q" name="DB1">
-  <cont xmi:id="_dV15wNE9Eeef4JgOE0yy0Q" name="T1">
-    <contC xmi:id="_e-134NE9Eeef4JgOE0yy0Q" name="name"/>
-  </cont>
-  <cont xmi:id="_h7E_gNE9Eeef4JgOE0yy0Q" name="T2"/>
-</sql:Database>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:sql="http://sql.fr">
+  <sql:Database/>
+  <sql:Database name="oooooooo"/>
+  <sql:Database name="c6"/>
+</xmi:XMI>
