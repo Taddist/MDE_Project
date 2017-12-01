@@ -5,4 +5,5 @@
   <sql:Database name="DBMDE"/>
   <sql:Database name="c3"/>
   <sql:Database name="c8"/>
+  <sql:Database name="c3"/>
 </xmi:XMI>

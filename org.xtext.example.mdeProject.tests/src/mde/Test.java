@@ -457,9 +457,16 @@ public class Test {
 	}
 	
 	public void LoadTarget() {
-		//Load Metamodel and model 
-		loadMetaModel(metamodelChange);
-		loadModel(modelChange);
+		
+		
+		try {
+			//Load Metamodel and model 
+			loadMetaModel(metamodelChange);
+			loadModel(modelChange);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
 	}
 	
