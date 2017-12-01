@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="ASCII"?>
 <xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:sql="http://sql.fr">
-  <sql:Database/>
-  <sql:Database name="DBMDE"/>
-  <sql:Database name="DBMDE"/>
-  <sql:Database name="c3"/>
+  <sql:Database xmi:id="_8w-aQdCVEeeloICn_Gc5pQ" name="two">
+    <cont xmi:id="_x_Z8UNavEee0McEOXFrvXQ" name="T2">
+      <contC xmi:id="_y1AHkNavEee0McEOXFrvXQ" name="C2"/>
+      <contC xmi:id="_zNDbMNavEee0McEOXFrvXQ" name="C3"/>
+    </cont>
+  </sql:Database>
+  <sql:Database xmi:id="_btlgENavEee0McEOXFrvXQ" name="D3"/>
   <sql:Database name="c8"/>
-  <sql:Database name="c3"/>
 </xmi:XMI>
