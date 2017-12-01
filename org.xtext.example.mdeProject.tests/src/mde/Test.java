@@ -37,7 +37,8 @@ public class Test {
 	static Resource MMResource, MResource ;
 	static EObject modelRoot ,ChangeRoot;
 	static String metamodelChange,modelChange;
-	static Hashtable attributeValue , attributeValueM;
+	static Hashtable attributeValue , attributeValueM , attributeValueD;
+	static EObject object ;
 	
 	
 	public void loadMetaModel(String uri) {
@@ -87,36 +88,19 @@ public class Test {
 		}
 
 	
-	//Get all the value of the attributes of the object in argument
+	//Get all the value !null  of the attributes  of the object in argument
 	public Hashtable HashtableAllAttribute(EObject object) {
-		
 		EClass metaClass =object.eClass();
 		EList<EAttribute> nameMm= metaClass.getEAllAttributes();
 		
 		Hashtable ht = new Hashtable();
-		
-		
+
 		for (EAttribute  att : nameMm) {
-				if(object.eGet(att) == null)
-				{
-					//System.out.println("NUUUUUUUUUUUUUUUUUUUUUUL");
-					
-				}
+				if(object.eGet(att) == null){}
 				else {
-					//System.out.println("+++++++++++++++++++++++++"+att.getName()+" : "+object.eGet(att));
 					ht.put(att.getName(),object.eGet(att));
 				}
-				
 		}
-		/*
-		System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-		 Enumeration e = ht.elements();
-
-
-		    while(e.hasMoreElements())
-
-		      System.out.println(e.nextElement());
-		*/
 		return ht;
 	}
 	
@@ -135,7 +119,6 @@ public class Test {
 					
 				}
 				else {
-					//System.out.println("+++++++++++++++++++++++++"+att.getName()+" : "+object.eGet(att));
 					ht.put(att.getName(),object.eGet(att));
 				}
 				
@@ -155,13 +138,8 @@ public class Test {
 	    Resource load_resource = resourceSet.getResource(URI.createURI(uri),true);
 	    MResource = load_resource;
 	    ChangeRoot = MResource.getContents().get(0);
-	    System.out.println("------------> TRansformation Model ------------>");
-	    
-	    System.out.println("------------>"+ChangeRoot);
 	    String nameChangeRoot= name(ChangeRoot);
-	    System.out.println("------------>" + nameChangeRoot);
-	    GetAllAttribute(ChangeRoot);
-	    System.out.println("------------> TRansformation Model ------------>");
+	    //GetAllAttribute(ChangeRoot);
 	    return ChangeRoot;
 	}
 	
@@ -250,7 +228,7 @@ public class Test {
 					
 					if (h.get("name").equals(object.eGet(Name)))
 					{
-						EcoreUtil.delete(object, true);
+						
 					}
 				}
 			}		
@@ -259,9 +237,8 @@ public class Test {
 	 
 	 
 	 public void ModifyEclass(Hashtable h) {
-		 
-			for(Iterator<EObject> ai= MResource.getAllContents(); ai.hasNext(); ) {
-				EObject object =(EObject) ai.next();
+		    
+		
 				EClass eClass =object.eClass();
 				
 				if (eClass.getName().equals(h.get("type"))) {
@@ -275,12 +252,6 @@ public class Test {
 							object.eSet(Name, value);
 					
 						}
-						
-						System.out.println(h.get("newValueType"));
-						String type = (h.get("newValueType")).getClass().getName();
-						System.out.println(type);
-						
-						
 						if (h.get("newValueType")!="nul"){
 							String value = (String) h.get("newValueType");
 							object.eSet(Type, value);
@@ -290,6 +261,32 @@ public class Test {
 					}
 				}
 			}		
+	
+	 
+	 public String ExistEclass(Hashtable h) {
+		    String result="";
+		    //System.out.println("Start ______________________________>");
+			for(Iterator<EObject> ai= MResource.getAllContents(); ai.hasNext(); ) {
+				object =(EObject) ai.next();
+				EClass eClass =object.eClass();
+				
+				if (eClass.getName().equals(h.get("type"))) {
+					EAttribute Name = (EAttribute) eClass.getEStructuralFeature("name");
+					
+					//System.out.println(h.get("name"));
+					//System.out.println(object.eGet(Name));
+					if (h.get("name").equals(object.eGet(Name)))
+					{
+						result="Exists";
+						break;
+					}
+					else { 
+						result="NotExists";
+					}
+				}
+				 //System.out.println("End ______________________________>");
+			}	
+			return result;
 	}
 	//Make a list for errors to print it later 
 	public void ParseEMF(EObject Root ) {
@@ -313,16 +310,26 @@ public class Test {
 			
 			//case 1 : Adding
 			if (nameQueryExpression.equals("Add")) {
-				System.out.println("######  " + " Start Operation ' "+ nameQueryExpression +" ' ###### ");
+				System.out.println("-----------------------------------" + " Start Operation ' "+ nameQueryExpression +" '-----------------------------------");
 				
-				System.out.println("------------- " + nameKeyword +"   ----------");
+				//System.out.println("------------- " + nameKeyword +"   ----------");
 				
 				//case 1.1 : Eclass
 				if(nameKeyword.equals("Eclass")) {
 					//Get all the attributes of the keyword and their values
-					GetAllAttribute(keyword);	
+					//GetAllAttribute(keyword);	
 					attributeValue = HashtableAllAttribute(keyword);
-					AddEclass(attributeValue);
+					
+					//System.out.println(attributeValue);
+					if(ExistEclass(attributeValue) == "NotExists") {
+						AddEclass(attributeValue);
+						saveResource();
+						
+					}
+					else {
+						System.out.println("##################### Already exists , No changes made  #######################");
+					}
+					
 					//Add the object in the  target model
 					//Check if the object doesn't exist in the target model
 					
@@ -337,20 +344,20 @@ public class Test {
 			}
 			//case 2 : Modifying
 			else if (nameQueryExpression.equals("Modify")) {
-				System.out.println("######  " + " Start Operation ' "+ nameQueryExpression +" ' ###### ");
+				System.out.println("----------------------------------- " + " Start Operation ' "+ nameQueryExpression +" ' -----------------------------------");
 				
 				//Get all the attributes of "Modify"  and their values 
-				GetAllAttribute(oneQueryExpression);
+				//GetAllAttribute(oneQueryExpression);
 				
 				attributeValueM = new Hashtable();
 				 
-				System.out.println("------------- " + nameKeyword +"   ----------");
+				//System.out.println("------------- " + nameKeyword +"   ----------");
 				
 				
 				if(nameKeyword.equals("Eclass")) {
 					
 					//Get all the attributes of the keyword and their values
-					GetAllAttribute(keyword);
+					//GetAllAttribute(keyword);
 					
 					
 					
@@ -368,8 +375,16 @@ public class Test {
 				    	 attributeValueM.put(key, (HashtableAllAttributeM(keyword)).get(key));
 				     }
 				     
-				     ModifyEclass(attributeValueM);
+				    
 				     
+				     if(ExistEclass(attributeValueM) == "NotExists") {
+							System.out.println("##################### Doesn't exists , No changes made #######################");
+						}
+						else {
+							ModifyEclass(attributeValueM);
+							saveResource();
+							
+						}
 					
 					//Modify the object in the  target model
 					//Check if the object exists in the target model
@@ -384,10 +399,10 @@ public class Test {
 			}
 			//case 3 : Deleting
 			else if (nameQueryExpression.equals("Delete")) {
-				System.out.println("######  " + " Start Operation ' "+ nameQueryExpression +" ' ###### ");
+				System.out.println("-----------------------------------" + " Start Operation ' "+ nameQueryExpression +" ' -----------------------------------");
 				
 
-				System.out.println("-------------> " + nameKeyword +"    ---------->");
+				//System.out.println("-------------> " + nameKeyword +"    ---------->");
 				
 				if(nameKeyword.equals("Eclass")) {
 					//Get all the attributes of the keyword and their values
@@ -395,8 +410,21 @@ public class Test {
 					//Delete the object in the  target model
 					//Check if the object exists in the target model
 					
-					attributeValue = HashtableAllAttribute(keyword);
-					DeleteEclass(attributeValue);
+					attributeValueD = HashtableAllAttribute(keyword);
+					
+					//System.out.println(ExistEclass(attributeValueD) );
+					if(ExistEclass(attributeValueD) == "NotExists") {
+						System.out.println("##################### Doesn't exists , No changes made #######################");
+					}
+					else {
+						//DeleteEclass(attributeValueD);
+						EcoreUtil.delete(object, true);
+						saveResource();
+						
+					}
+					
+					
+					
 				
 				}
 				else if (nameKeyword.equals("Eattribute")) {
@@ -453,10 +481,6 @@ public class Test {
 			t.ParseEMF(modelRoot);
 			
 			
-			System.out.println("//////////////////////////////////////////////////////");
-			System.out.println(MResource.getAllContents());
-			
-			t.saveResource();
 			
 			
 			
@@ -465,25 +489,6 @@ public class Test {
 			e.printStackTrace();
 		}
 		
-		/*
-	    Enumeration e = attributeValue.elements();
-
-	    while(e.hasMoreElements())
-	      System.out.println(e.nextElement());
-
-	    System.out.println("++++++++++++++++++++++++++++++++");
-	    System.out.println(attributeValue.get("type"));
-		
-		*/
-		/*
-		Hashtable ht = new Hashtable();
-		ht.put("name", "c1");
-		ht.put("relatedTo", "c2");
-		ht.put("boundEclass", "1..*");
-		ht.put("boundRelatedTo", "1..*");
-		ht.put("typeRelation", "compose");
-		ht.put("type", "Table");
-		*/
 	}
 }
 
