@@ -238,6 +238,25 @@ public class Test {
 		    
 	 }
 	 
+	 //AddEclass
+	 public void DeleteEclass(Hashtable h) {
+		 
+		 for(Iterator<EObject> ai= MResource.getAllContents(); ai.hasNext(); ) {
+				EObject object =(EObject) ai.next();
+				EClass eClass =object.eClass();
+				
+				if (eClass.getName().equals(h.get("type"))) {
+					EAttribute Name = (EAttribute) eClass.getEStructuralFeature("name");
+					
+					if (h.get("name").equals(object.eGet(Name)))
+					{
+						EcoreUtil.delete(object, true);
+					}
+				}
+			}		
+	 }
+
+	 
 	 
 	 public void ModifyEclass(Hashtable h) {
 		 
@@ -375,6 +394,9 @@ public class Test {
 					//GetAllAttribute(keyword);
 					//Delete the object in the  target model
 					//Check if the object exists in the target model
+					
+					attributeValue = HashtableAllAttribute(keyword);
+					DeleteEclass(attributeValue);
 				
 				}
 				else if (nameKeyword.equals("Eattribute")) {
@@ -429,6 +451,10 @@ public class Test {
 			
 			//Parse the model of the changement and make the changes in the target model 
 			t.ParseEMF(modelRoot);
+			
+			
+			System.out.println("//////////////////////////////////////////////////////");
+			System.out.println(MResource.getAllContents());
 			
 			t.saveResource();
 			
