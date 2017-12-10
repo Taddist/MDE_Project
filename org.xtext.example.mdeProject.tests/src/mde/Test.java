@@ -346,14 +346,8 @@ public class Test {
 					attributeValue = HashtableAllAttribute(keyword);
 					
 					//System.out.println(attributeValue);
-					if(ExistEclass(attributeValue) == "NotExists") {
-						AddEclass(attributeValue);
-						saveResource();
-						
-					}
-					else {
-						System.out.println("##################### Already exists , No changes made  #######################");
-					}
+					AddElement_Attribut(attributeValue);
+					saveResource();
 					
 					//Add the object in the  target model
 					//Check if the object doesn't exist in the target model
@@ -574,6 +568,130 @@ public class Test {
 					}
 			    }  
 	}
+	
+	
+	public List<String> Ref(String T) {
+		 EList<EClassifier> eClassifiers = MMePackage.getEClassifiers();
+		 List<String> ListeRef = new ArrayList<String>();
+		 for (EClassifier eClassifier : eClassifiers) {
+			 EClass eClass = (EClass) eClassifier;
+			 EList<EReference> eReferences = eClass.getEReferences();
+             for (EReference eReference : eReferences) {
+                 if(eReference.getEType().getName().equals(T)) {
+                	 ListeRef.add(eClass.getName());
+                	 ListeRef.add(eReference.getName());
+                	 
+                 }
+             }
+         }return ListeRef;
+	}
+	
+	//liste des tables dans une database
+		 public List<EObject> Liste_contenu_object(EClass eClass,Hashtable h,EObject objInstance,EObject object){
+			 List<EObject> contList = new ArrayList<EObject>();
+			 EList<EAttribute> eAttributes = eClass.getEAttributes();
+				for (EAttribute eAttribute : eAttributes) {
+					EAttribute eName = (EAttribute) eClass.getEStructuralFeature( eAttribute.getName());
+					objInstance.eSet(eName, h.get("name"));
+				}
+				List<EObject> List = object.eContents();
+				for(EObject one : List) {
+				
+					contList.add(one);
+				}
+				return contList;
+			 
+		 }
+		 
+		//add table in database
+		 public void Add_Object(String nameRef,EClass eClass,Hashtable h,EObject objInstance,EReference cont) {
+			 List<EObject> contList = new ArrayList<EObject>();
+			 for(Iterator<EObject> ai= MResource.getAllContents(); ai.hasNext(); ) {
+	 			EObject object =(EObject) ai.next();
+	 			EClass eclass =object.eClass();
+	 				if(eclass.getName().equals(nameRef)) {
+			    			for(Iterator<EAttribute> iter= eclass.getEAllAttributes().iterator(); iter.hasNext(); ) {
+			    				EAttribute attribute =iter.next();
+			    					if( object.eGet(attribute).equals(h.get("relatedTo"))) {
+											contList=Liste_contenu_object(eClass,h,objInstance,object);
+											EList<EAttribute> eAttributes = eClass.getEAttributes();
+											int c =0;
+											for(EObject l : contList) {
+												EClass eclas =l.eClass();
+												for(Iterator<EAttribute> it= eclas.getEAllAttributes().iterator(); it.hasNext(); ) {
+													EAttribute attribut =it.next();
+													if( attribut.getName().equals("name")) {
+													if((l.eGet(attribut)).equals(h.get("name"))) {
+															c=c+1;
+													}
+													}
+												}
+												
+											}
+											if(c!=0) {
+												System.out.println("----------ERROR--------");
+											}
+											else {
+											contList.add(objInstance);
+										    object.eSet(cont, contList);
+											}
+											
+											//object.eUnset(cont);
+			    					}
+			    			}
+	 				}
+	     	}
+		 }
+		 
+		 
+		//AddElement +listvalue
+		 //nameeclass==type
+		 public void AddElement_Attribut(Hashtable h) {
+			 EList<EClassifier> eClassifiers = MMePackage.getEClassifiers();
+			    for (EClassifier eClassifier : eClassifiers) {
+			    	if (eClassifier.getName().equals(h.get("type"))) {
+			        	if (eClassifier instanceof EClass) {
+			        		EClass eClass = (EClass) eClassifier;
+			        		
+			        		if(eClass.getName().equals(eClassifiers.get(0).getName())) {
+			        			EObject databasenstance = MMePackage.getEFactoryInstance().create(
+							            eClass);
+					            EList<EAttribute> eAttributes = eClass.getEAttributes();
+					            for (EAttribute eAttribute : eAttributes) {
+					            	EAttribute eName = (EAttribute) eClass.getEStructuralFeature(eAttribute.getName());
+					            	
+					            	String value = (String) h.get(eAttribute.getName());
+					            	databasenstance.eSet(eName, value);
+					        }MResource.getContents().add(databasenstance);
+			        			
+			        		}
+			        		else {
+			        		String name =(String) h.get("type");//name==Table || name = column
+			        		String nameRef = Ref(name).get(0);//nameRef==Database || nameref= table
+			        		if(Ref(name) != null) {
+			        			
+			        			if(Ref(nameRef) != null) {
+					            
+			        				EClass parent = (EClass) MMePackage.getEClassifier(nameRef);
+			        				EReference ref = (EReference) parent.getEStructuralFeature(Ref(name).get(1));//name ereference==contC
+			        				EObject objInstance = MMePackage.getEFactoryInstance().create(eClass);
+			        			    Add_Object(nameRef,eClass,h,objInstance,ref);
+			        			}      		
+			        			 
+			        			
+			        			else {
+			        				EClass parent = (EClass) MMePackage.getEClassifier(nameRef);
+						            EReference ref = (EReference) parent.getEStructuralFeature(Ref(name).get(1));//name ereference
+						            EObject objInstance = MMePackage.getEFactoryInstance().create(eClass);
+						            Add_Object(nameRef,eClass,h,objInstance,ref);
+			        			}
+					            
+			        		}
+			        		
+			        		}}}}
+		 
+		 }
+		 
 	
 	public static void main(String[] args) {
 	

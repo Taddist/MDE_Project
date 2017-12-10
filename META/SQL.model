@@ -8,6 +8,7 @@
       <contC name="IWIM"/>
       <contC name="C3"/>
     </cont>
+    <cont name="tab1"/>
   </sql:Database>
   <sql:Database name="cours">
     <cont name="element2">
@@ -16,6 +17,11 @@
     </cont>
     <cont name="element3">
       <contC name="ex1"/>
+    </cont>
+  </sql:Database>
+  <sql:Database name="fatitest">
+    <cont name="tab1">
+      <contC name="c1"/>
     </cont>
   </sql:Database>
 </xmi:XMI>
