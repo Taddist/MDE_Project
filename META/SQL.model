@@ -14,7 +14,7 @@
       <contC name="ex2"/>
       <contC name="ex3"/>
     </cont>
-    <cont name="GLaaa">
+    <cont name="element3">
       <contC name="ex1"/>
     </cont>
   </sql:Database>

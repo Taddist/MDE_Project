@@ -44,6 +44,7 @@ public class Test {
 	static Hashtable attributeValue , attributeValueM , attributeValueD;
 	static EObject object , objRelated ;
 	static String Container , ref;
+	static int count=0;
 	
 	
 	public void loadMetaModel(String uri) {
@@ -121,7 +122,7 @@ public class Test {
 		}
 	}
 	
-	public void saveResource(){
+	public static void saveResource(){
 		try{
 			MResource.save(null);
 			System.out.println("Après sauvegarde de la resource");
@@ -246,7 +247,7 @@ public class Test {
 
 	 
 	 
-	 public void ModifyEclass(Hashtable h) {
+	 public static void ModifyEclass(Hashtable h) {
 		    
 		
 				EClass eClass =object.eClass();
@@ -400,52 +401,25 @@ public class Test {
 				     }
 				    
 				     if(ExistEclass(attributeValueM) == "NotExists") {
-							System.out.println("##################### Doesn't exists , No changes made #######################");
+				    	 System.out.println("#####################  "+attributeValueM.get("name")+"  Doesn't exists , No changes made #######################");
 						}
 					else {
 							if ((attributeValueM.get("relatedTo")) == "nul") {
-								System.out.println("NUUUUULL");
-								System.out.println(attributeValueM);
 								ModifyEclass(attributeValueM);
 								saveResource();
 							}
 							else {
-								System.out.println("RELATED");
 								Hashtable related = new Hashtable();
 								related.put("name",attributeValueM.get("relatedTo"));
 								if (GetMetaType(related) == null ) {
-									
-									System.out.println("##################### The object 'Related To' Doesn't exists , No changes made #######################");
-									
+									System.out.println("#####################  "+related.get("name")+"  Doesn't exists , No changes made #######################");
 								}
 								else {
 									related.put("type",GetMetaType(related));
 									if (Container == (related.get("type")) ) {
-										System.out.println("C'est bon ");
-										System.out.println(object); // the target object 
-										System.out.println(objRelated); // The object of related to 
-										EList<EObject> l = objRelated.eContents();
-										
-										  for(EObject el : l ) {
-											    EClass c =object.eClass();
-												EAttribute Name = (EAttribute) c.getEStructuralFeature("name");
-												System.out.println("_______________________"+el.eGet(Name));
-												System.out.println((attributeValueM.get("name")));
-													if ( attributeValueM.get("name").equals(el.eGet(Name) )) {
-														if (!(el.equals(object))) {
-															object=el;
-														}
-														
-														ModifyEclass(attributeValueM);
-														saveResource();
-														
-														
-													}
-													//Eclass c= (Eclass) el ;
-											    }
-											   
-										
-										
+										GetObjectFromContainer();
+										ModifyEclass(attributeValueM);
+										saveResource();
 									}
 									else {
 										System.out.println("##################### Review your request : "+ related.get("type") +"  doesn't contain  "+attributeValueM.get("type")+ ", No changes made #######################");
@@ -453,9 +427,6 @@ public class Test {
 								}
 								
 							}
-							
-							
-							
 						}
 					
 					//Modify the object in the  target model
@@ -472,10 +443,7 @@ public class Test {
 			//case 3 : Deleting
 			else if (nameQueryExpression.equals("Delete")) {
 				System.out.println("-----------------------------------" + " Start Operation ' "+ nameQueryExpression +" ' -----------------------------------");
-				
-
-				System.out.println("-------------> " + nameKeyword +"    ---------->");
-				
+		
 				if(nameKeyword.equals("Eclass")) {
 					//Get all the attributes of the keyword and their values
 					//GetAllAttribute(keyword);
@@ -483,87 +451,33 @@ public class Test {
 					//Check if the object exists in the target model
 					
 					attributeValueD = HashtableAllAttribute(keyword);
-					System.out.println("-------------> " + attributeValueD +"    ---------->");
-					//System.out.println(ExistEclass(attributeValueD) );
 					if(ExistEclass(attributeValueD) == "NotExists") {
-						System.out.println("##################### Doesn't exists , No changes made #######################");
+						System.out.println("#####################  "+attributeValueD.get("name")+"  Doesn't exists , No changes made #######################");
 					}
 					else {
 						//DeleteEclass(attributeValueD);
 						if((attributeValueD.get("relatedTo")) == null) {
 							EcoreUtil.delete(object, true);
-							System.out.println("ooooooooooooooo"+object);
 							saveResource();
 						}
 						else {
-							System.out.println("ELSE OF ELSE ");
 							Hashtable related = new Hashtable();
 							
 							related.put("name",attributeValueD.get("relatedTo"));
-							System.out.println("-------------> " + related.get("name") +"    ---------->");
 							if (GetMetaType(related) == null ) {
-								
-								System.out.println("##################### The object 'Related To' Doesn't exists , No changes made #######################");
-								
+								System.out.println("##################### "+related.get("name")+" Doesn't exists , No changes made #######################");
 							}
 							else {
 								related.put("type",GetMetaType(related));
-								System.out.println("----++++++++++++++++-> " + Container +"    ---------->");
 								
 								if (Container == (related.get("type")) ) {
-									System.out.println("----  C'EST BON ---------->");
-									
-									EList<EObject> l = objRelated.eContents();
-									List<EObject> newl = new ArrayList<EObject>() ;
-									
-									EList<EReference> eReferences = objRelated.eClass().getEReferences();
-						            for (EReference eReference : eReferences) {
-						            	 System.out.println("~~~~~~~~~~éééé"+eReference);
-						            	 if(eReference.getEType().getName().equals(attributeValueD.get("type"))) {
-						            		 System.out.println("```````````````````"+eReference.getName());
-						            		 ref=eReference.getName();
-					            		 }
-						             }
-						            
-									  for(EObject el : l ) {
-										    EClass c =object.eClass();
-											EAttribute Name = (EAttribute) c.getEStructuralFeature("name");
-											System.out.println("_______________________"+el.eGet(Name));
-											System.out.println((attributeValueD.get("name")));
-												if ( attributeValueD.get("name").equals(el.eGet(Name) )) {
-													System.out.println("Exiiiiiiiiiiiiiiiist");
-													//saveResource();
-												}
-												else {
-													newl.add(el);
-												}
-												//Eclass c= (Eclass) el ;
-										 }
-									  System.out.println("*******************-----------------"+newl);
-									  EReference cont = (EReference) objRelated.eClass().getEStructuralFeature(ref);//name
-									  objRelated.eSet(cont, newl);
-									  saveResource();
-							            		
-									  //objRelated.eSet(feature, newValue);
-									// wach hadik la table kayna f had la basedonnee
-									/*
-									EStructuralFeature containingFeature = object.eContainingFeature();
-									System.out.println("ooooooooooooooo"+object);
-									System.out.println("------------------"+containingFeature.getFeatureID());
-									System.out.println("ooooooooooooooo"+containingFeature.getName());
-									System.out.println(""+objRelated);
-									
-									List <EObject> lst = objRelated.eContents();
-									for (EObject o : lst) {
-										System.out.println("+++++++++++++"+o.eContainingFeature());
-									}
-									objRelated.eUnset(containingFeature);	
-									//saveResource();
-									  */
-									
-									
-									
-									 
+									 ChangeEcontents();
+									 if (count==0) {
+										  System.out.println("##################### The "+ object.eClass().getName() + " " +object.eGet( object.eClass().getEStructuralFeature("name"))+" Doesn't exists in  "+objRelated.eClass().getName()+ " " +objRelated.eGet( objRelated.eClass().getEStructuralFeature("name"))+ ", No changes made #######################");
+									  }
+									  else {
+										  saveResource();
+									  }
 								}
 								else {
 									System.out.println("##################### Review your request : "+ related.get("type") +"  doesn't contain  "+attributeValueD.get("type")+ ", No changes made #######################");
@@ -592,6 +506,30 @@ public class Test {
 			}
 		}
 		System.out.println("-----------------------------------End Parsing---------------------------------------");
+	}
+	
+	public static void ChangeEcontents() {
+		
+		EList<EObject> l = objRelated.eContents();
+		List<EObject> newl = new ArrayList<EObject>() ;	
+		GetRef();
+		for(EObject el : l ) {
+			    EClass c =object.eClass();
+			    EAttribute Name = (EAttribute) c.getEStructuralFeature("name");
+					if ( attributeValueD.get("name").equals(el.eGet(Name) )) {count=1;}
+					else {newl.add(el);}		
+		}
+		EReference cont = (EReference) objRelated.eClass().getEStructuralFeature(ref);//name
+		objRelated.eSet(cont, newl);
+	}
+	
+	public static void GetRef() {
+		EList<EReference> eReferences = objRelated.eClass().getEReferences();
+        for (EReference eReference : eReferences) {
+        	 if(eReference.getEType().getName().equals(attributeValueD.get("type"))) {
+        		 ref=eReference.getName();
+    		 }
+         }
 	}
 	
 	public static String GetMetaType (Hashtable h ) {
@@ -623,8 +561,19 @@ public class Test {
 			
 		}
 	}
-
 	
+	public static void GetObjectFromContainer() {
+		
+		EList<EObject> l = objRelated.eContents();
+		
+		  for(EObject el : l ) {
+			    EClass c =object.eClass();
+				EAttribute Name = (EAttribute) c.getEStructuralFeature("name");
+					if ( attributeValueM.get("name").equals(el.eGet(Name) )) {
+						if (!(el.equals(object))) {object=el;}
+					}
+			    }  
+	}
 	
 	public static void main(String[] args) {
 	
