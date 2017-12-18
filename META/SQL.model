@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="ASCII"?>
 <xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:sql="http://sql.fr">
-  <sql:Database name="ensias">
-    <cont name="A1">
-      <contC name="C1"/>
+  <sql:Database xmi:id="_8w-aQdCVEeeloICn_Gc5pQ" name="DB1" TypeDB="postgreSQL">
+    <cont name="T1">
+      <contC name="C1" PrimaryKey="true"/>
     </cont>
-    <cont name="IWIM">
-      <contC name="IWIM"/>
-      <contC name="C3"/>
+    <cont name="T2">
+      <contC name="C2" PrimaryKey="true"/>
+      <contC name="C3" PrimaryKey="true"/>
     </cont>
-    <cont name="tab1"/>
+    <cont name="mooon"/>
+    <cont name="sun"/>
+    <cont name="afafaffaffafa"/>
+    <cont name="teb"/>
   </sql:Database>
-  <sql:Database name="cours">
-    <cont name="element2">
-      <contC name="ex2"/>
-      <contC name="ex3"/>
-    </cont>
-    <cont name="element3">
-      <contC name="ex1"/>
-    </cont>
+  <sql:Database xmi:id="_kyjkSONXEeeqLYvcLrt9DQ" name="DB2" TypeDB="mysql">
+    <cont name="afafaffaffafa"/>
   </sql:Database>
-  <sql:Database name="fatitest">
-    <cont name="tab1">
-      <contC name="c1"/>
+  <sql:Database xmi:id="_kyjkSuNXEeeqLYvcLrt9DQ" name="two" TypeDB="cassandra">
+    <cont name="ali"/>
+  </sql:Database>
+  <sql:Database name="EnsiasIngenieur">
+    <cont name="Cours">
+      <contC name="name"/>
     </cont>
   </sql:Database>
 </xmi:XMI>

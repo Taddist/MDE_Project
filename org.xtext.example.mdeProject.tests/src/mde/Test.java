@@ -41,10 +41,12 @@ public class Test {
 	static Resource MMResource, MResource ;
 	static EObject modelRoot ,ChangeRoot;
 	static String metamodelChange,modelChange;
-	static Hashtable attributeValue , attributeValueM , attributeValueD;
+	static Hashtable attributeValue , attributeValueM , attributeValueD,attributeValueL;
 	static EObject object , objRelated ;
 	static String Container , ref;
 	static int count=0;
+	static EAttribute eAttChosen;
+	static Object value ;
 	
 	
 	public void loadMetaModel(String uri) {
@@ -304,6 +306,63 @@ public class Test {
 			return result;
 	}
 	 
+	 public String ExistFromName(Hashtable h) {
+		 String result="";
+		 for(Iterator<EObject> ai= MResource.getAllContents(); ai.hasNext(); ) {
+				object =(EObject) ai.next();
+				EClass eClass =object.eClass();
+				EAttribute Name = (EAttribute) eClass.getEStructuralFeature("name");
+				if(h.get("name").equals(object.eGet(Name))) {
+					result="Exists";
+					break;
+				}
+				else {
+					result="NotExists";
+				}
+			}
+		 return result;
+	 }
+	 
+	 public String ExistEattribute(Hashtable h) {
+		 String result="";
+		 EClass eclass= object.eClass();
+			EList<EAttribute> eAttributes = eclass.getEAttributes();
+			 for (EAttribute eAttribute : eAttributes) { 
+			         if ((h.get("name")).equals(eAttribute.getName())) {
+			        	 result="Exists";
+			        	 
+			        	 eAttChosen=eAttribute;
+						 break;
+			         }
+			         else {
+			        	 result="NotExists";
+			         }
+		    }
+		 return result;
+	 }
+	 public void Converter(Object object,String string){
+			if(object instanceof String) {
+				value = new String(string);
+			}
+			else if (object instanceof Integer) {
+				value =new Integer (string) ;
+			}
+			else if (object instanceof Double) {
+				value = new Double(string);
+			}
+			else if (object instanceof Long) {
+				value = new Long(string);
+			}
+			else if (object instanceof Short) {
+				value = new Short(string);
+			}
+			else if (object instanceof Boolean) {
+				value = new Boolean(string);
+			}
+			else if (object instanceof Long) {
+				value = new Long(string);
+			}
+	}
 	 public void ParseTargetEMF(EObject Root ) {
 		 EList<EObject> AllExpression =Root.eContents();
 		 //System.out.println(AllExpression);
@@ -338,15 +397,26 @@ public class Test {
 				System.out.println("-----------------------------------" + " Start Operation ' "+ nameQueryExpression +" '-----------------------------------");
 				
 				//System.out.println("------------- " + nameKeyword +"   ----------");
-				
+				attributeValue = HashtableAllAttribute(keyword);
 				//case 1.1 : Eclass
 				if(nameKeyword.equals("Eclass")) {
 					//Get all the attributes of the keyword and their values
 					//GetAllAttribute(keyword);	
-					attributeValue = HashtableAllAttribute(keyword);
+					
 					
 					//System.out.println(attributeValue);
-					AddElement_Attribut(attributeValue);
+					//AddElement_Attribut(attributeValue);
+					
+					EList<EObject> listE = keyword.eContents();
+					  if ( listE != null) {
+						  for (EObject eatt : listE) {
+							  System.out.println("---------------"+eatt);
+							  attributeValueL = HashtableAllAttribute(eatt);
+							  System.out.println("---------------"+attributeValueL);
+							  System.out.println("---------------"+attributeValue.get("name"));
+						  }
+					  }		
+					  
 					saveResource();
 					
 					//Add the object in the  target model
@@ -359,6 +429,43 @@ public class Test {
 					//GetAllAttribute(keyword);
 					//Add the object in the target model
 					//Check if the object doesn't exist in the target model
+					Hashtable ecl = new Hashtable();
+					ecl.put("name",attributeValue.get("from"));
+					
+					if(ExistFromName(ecl)=="NotExists") {
+						System.out.println("#####################  "+ecl.get("name")+"  Doesn't exists , No changes made #######################");
+					}
+					else {
+						//System.out.println(object.eClass().getEAllAttributes());
+						//System.out.println(object.eClass().getEAttributes());
+						//What is the difference between getEAllAttributes() , getEAttributes()
+						
+						Hashtable ec = new Hashtable();
+						ec.put("name",attributeValue.get("type"));
+						if(ExistEattribute(ec)=="NotExists") {
+							System.out.println("#####################  "+ec.get("name")+"  Doesn't exists , No changes made #######################");
+						}
+						else {
+							
+								EAttribute att = (EAttribute) object.eClass().getEStructuralFeature(eAttChosen.getName());
+								String va=(String) attributeValue.get("name");
+								//obj might be null 
+								
+								Object obj =object.eGet((EStructuralFeature)att);
+							
+								if (obj == null) {
+									obj = att.getEAttributeType().getName();
+									
+								}
+								
+								//Convert the value given by the user in the specific type of the attribute 
+								Converter(obj,va);
+								
+								object.eSet(att, value);
+								saveResource();
+
+						}
+				}
 				}
 			}
 			//case 2 : Modifying
@@ -369,9 +476,20 @@ public class Test {
 				//GetAllAttribute(oneQueryExpression);
 				
 				attributeValueM = new Hashtable();
-				 
-				//System.out.println("------------- " + nameKeyword +"   ----------");
-				
+
+				 Set<String> keySetQuery = new HashSet<String>();
+				 keySetQuery.addAll((HashtableAllAttributeM(oneQueryExpression)).keySet());
+			     Set<String> keySetEclass = new HashSet<String>();
+			     keySetEclass.addAll((HashtableAllAttributeM(keyword)).keySet());
+			     
+			     
+			     for (String key : keySetQuery) {
+				     attributeValueM.put(key, (HashtableAllAttributeM(oneQueryExpression)).get(key));
+			     }
+			     
+			     for (String key : keySetEclass) {
+			    	 attributeValueM.put(key, (HashtableAllAttributeM(keyword)).get(key));
+			     }
 				
 				if(nameKeyword.equals("Eclass")) {
 					
@@ -380,19 +498,6 @@ public class Test {
 					
 					
 					
-					 Set<String> keySetQuery = new HashSet<String>();
-					 keySetQuery.addAll((HashtableAllAttributeM(oneQueryExpression)).keySet());
-				     Set<String> keySetEclass = new HashSet<String>();
-				     keySetEclass.addAll((HashtableAllAttributeM(keyword)).keySet());
-				     
-				     
-				     for (String key : keySetQuery) {
-					     attributeValueM.put(key, (HashtableAllAttributeM(oneQueryExpression)).get(key));
-				     }
-				     
-				     for (String key : keySetEclass) {
-				    	 attributeValueM.put(key, (HashtableAllAttributeM(keyword)).get(key));
-				     }
 				    
 				     if(ExistEclass(attributeValueM) == "NotExists") {
 				    	 System.out.println("#####################  "+attributeValueM.get("name")+"  Doesn't exists , No changes made #######################");
@@ -431,20 +536,60 @@ public class Test {
 					//GetAllAttribute(keyword);
 					//Modify the object in the  target model
 					//Check if the object exists in the target model
+					System.out.println(attributeValueM);
+					Hashtable ecl = new Hashtable();
+					ecl.put("name",attributeValueM.get("from"));
+					if(ExistFromName(ecl)=="NotExists") {
+						System.out.println("#####################  "+ecl.get("name")+"  Doesn't exists , No changes made #######################");
+					}
+					else {
+						//System.out.println(object.eClass().getEAllAttributes());
+						//System.out.println(object.eClass().getEAttributes());
+						//What is the difference between getEAllAttributes() , getEAttributes()
+						if(ExistEattribute(attributeValueM)=="NotExists") {
+							System.out.println("#####################  "+attributeValueM.get("name")+"  Doesn't exists , No changes made #######################");
+						}
+						else {
+							
+							if( (attributeValueM.get("newValueName")=="nul") && (attributeValueM.get("newValueType")=="nul")) {
+								
+								System.out.println("##################### No changes made #######################");
+							}
+							else {
+								
+								EAttribute att = (EAttribute) object.eClass().getEStructuralFeature(eAttChosen.getName());
+								String va=(String) attributeValueM.get("newValueName");
+								
+								Object obj = object.eGet((EStructuralFeature)att);
+								
+								//Convert the value given by the user in the specific type of the attribute 
+								 Converter(obj,va);
+								 
+								object.eSet(att, value);
+								saveResource();
+								
+							}
+							
+							
+						}
+					}
+					
+					
 				}
 				
 			}
 			//case 3 : Deleting
 			else if (nameQueryExpression.equals("Delete")) {
 				System.out.println("-----------------------------------" + " Start Operation ' "+ nameQueryExpression +" ' -----------------------------------");
-		
+				
+				attributeValueD = HashtableAllAttribute(keyword);
 				if(nameKeyword.equals("Eclass")) {
 					//Get all the attributes of the keyword and their values
 					//GetAllAttribute(keyword);
 					//Delete the object in the  target model
 					//Check if the object exists in the target model
 					
-					attributeValueD = HashtableAllAttribute(keyword);
+					
 					if(ExistEclass(attributeValueD) == "NotExists") {
 						System.out.println("#####################  "+attributeValueD.get("name")+"  Doesn't exists , No changes made #######################");
 					}
@@ -491,8 +636,25 @@ public class Test {
 				
 				}
 				else if (nameKeyword.equals("Eattribute")) {
-					//Get all the attributes of the keyword and their values
-					//GetAllAttribute(keyword);
+					//Test if the Object "from" exists in the target model
+					Hashtable ecl = new Hashtable();
+					ecl.put("name",attributeValueD.get("from"));
+					if(ExistFromName(ecl)=="NotExists") {
+						System.out.println("#####################  "+ecl.get("name")+"  Doesn't exists , No changes made #######################");
+					}
+					else {
+						//Test if the Attribute exists in the Current object ("from")
+						if(ExistEattribute(attributeValueD)=="NotExists") {
+							System.out.println("#####################  "+attributeValueD.get("name")+"  Doesn't exists , No changes made #######################");
+						}
+						else {
+							EAttribute att = (EAttribute) object.eClass().getEStructuralFeature(eAttChosen.getName());
+							object.eUnset(att);
+							saveResource();
+						}
+						
+					}
+				
 					//Delete the object in the  target model
 					//Check if the object exists in the target model
 				}
@@ -591,8 +753,10 @@ public class Test {
 			 List<EObject> contList = new ArrayList<EObject>();
 			 EList<EAttribute> eAttributes = eClass.getEAttributes();
 				for (EAttribute eAttribute : eAttributes) {
+					if(eAttribute.getName().equals("name")) {
 					EAttribute eName = (EAttribute) eClass.getEStructuralFeature( eAttribute.getName());
 					objInstance.eSet(eName, h.get("name"));
+					}
 				}
 				List<EObject> List = object.eContents();
 				for(EObject one : List) {
@@ -612,6 +776,7 @@ public class Test {
 	 				if(eclass.getName().equals(nameRef)) {
 			    			for(Iterator<EAttribute> iter= eclass.getEAllAttributes().iterator(); iter.hasNext(); ) {
 			    				EAttribute attribute =iter.next();
+			    				if(attribute.getName().equals("name")) {
 			    					if( object.eGet(attribute).equals(h.get("relatedTo"))) {
 											contList=Liste_contenu_object(eClass,h,objInstance,object);
 											EList<EAttribute> eAttributes = eClass.getEAttributes();
@@ -638,6 +803,7 @@ public class Test {
 											
 											//object.eUnset(cont);
 			    					}
+			    			}
 			    			}
 	 				}
 	     	}
