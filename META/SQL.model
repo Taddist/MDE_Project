@@ -13,15 +13,4 @@
     <cont name="afafaffaffafa"/>
     <cont name="teb"/>
   </sql:Database>
-  <sql:Database xmi:id="_kyjkSONXEeeqLYvcLrt9DQ" name="DB2" TypeDB="mysql">
-    <cont name="afafaffaffafa"/>
-  </sql:Database>
-  <sql:Database xmi:id="_kyjkSuNXEeeqLYvcLrt9DQ" name="two" TypeDB="cassandra">
-    <cont name="ali"/>
-  </sql:Database>
-  <sql:Database name="EnsiasIngenieur">
-    <cont name="Cours">
-      <contC name="name"/>
-    </cont>
-  </sql:Database>
 </xmi:XMI>

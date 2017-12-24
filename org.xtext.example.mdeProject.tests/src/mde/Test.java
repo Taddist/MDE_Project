@@ -405,20 +405,53 @@ public class Test {
 					
 					
 					//System.out.println(attributeValue);
-					//AddElement_Attribut(attributeValue);
+					AddElement_Attribut(attributeValue);
 					
+					if(ExistEclass(attributeValue) == "Exists") {
+						
 					EList<EObject> listE = keyword.eContents();
 					  if ( listE != null) {
 						  for (EObject eatt : listE) {
-							  System.out.println("---------------"+eatt);
+				
 							  attributeValueL = HashtableAllAttribute(eatt);
-							  System.out.println("---------------"+attributeValueL);
-							  System.out.println("---------------"+attributeValue.get("name"));
+							
+							  
+							 
+									//System.out.println(object.eClass().getEAllAttributes());
+									//System.out.println(object.eClass().getEAttributes());
+									//What is the difference between getEAllAttributes() , getEAttributes()
+									
+									Hashtable e = new Hashtable();
+									e.put("name",attributeValueL.get("type"));
+									if(ExistEattribute(e)=="NotExists") {
+										System.out.println("#####################  "+e.get("name")+"  Doesn't exists , No changes made #######################");
+									}
+									else {
+										
+											EAttribute att = (EAttribute) object.eClass().getEStructuralFeature(eAttChosen.getName());
+											String va=(String) attributeValueL.get("name");
+											//obj might be null 
+											
+											Object obj =object.eGet((EStructuralFeature)att);
+										
+											if (obj == null) {
+												
+												obj = att.getEAttributeType().getName();
+												
+											}
+											
+											//Convert the value given by the user in the specific type of the attribute 
+											Converter(obj,va);
+											
+											object.eSet(att, value);
+											saveResource();
+
+									}
+							
+						  }
 						  }
 					  }		
-					  
-					saveResource();
-					
+					  saveResource();
 					//Add the object in the  target model
 					//Check if the object doesn't exist in the target model
 					
