@@ -8,9 +8,6 @@
       <contC name="C2" PrimaryKey="true"/>
       <contC name="C3" PrimaryKey="true"/>
     </cont>
-    <cont name="mooon"/>
-    <cont name="sun"/>
-    <cont name="afafaffaffafa"/>
-    <cont name="teb"/>
+    <cont name="T3"/>
   </sql:Database>
 </xmi:XMI>

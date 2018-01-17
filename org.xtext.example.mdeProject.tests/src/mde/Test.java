@@ -72,12 +72,6 @@ public class Test {
 	    ChangeRoot = MResource.getContents().get(0);
 	    String nameChangeRoot= name(ChangeRoot);
 	    //GetAllAttribute(ChangeRoot);
-	    /*
-	    for(Iterator<EObject> ai= MResource.getAllContents(); ai.hasNext(); ) {
-			EObject v =(EObject) ai.next();
-			System.out.println(v);
-	    }
-	    */
 	    return ChangeRoot;
 	}
 	
@@ -140,6 +134,7 @@ public class Test {
 	 */
 	
 	// take an object and return the name of its metaclass
+	
 	public static  String name(EObject object) {
 		EClass metaClass =object.eClass();
 		String nameMeta= metaClass.getName();
@@ -278,20 +273,15 @@ public class Test {
 	 
 	 public String ExistEclass(Hashtable h) {
 		    String result="";
-		    //System.out.println("Start ______________________________>");
 			for(Iterator<EObject> ai= MResource.getAllContents(); ai.hasNext(); ) {
 				object =(EObject) ai.next();
 				EClass eClass =object.eClass();
-				
-				
-				
+
 				if (eClass.getName().equals(h.get("type"))) {
-					//System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~"+eClass.getName());
 					if (object.eContainer() != null) {
 						Container = object.eContainer().eClass().getName();
 					}
 					EAttribute Name = (EAttribute) eClass.getEStructuralFeature("name");
-					//System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~"+object.eGet(Name));
 					if (h.get("name").equals(object.eGet(Name)))
 					{
 						result="Exists";
@@ -301,7 +291,6 @@ public class Test {
 						result="NotExists";
 					}
 				}
-				 //System.out.println("End ______________________________>");
 			}	
 			return result;
 	}
@@ -365,10 +354,8 @@ public class Test {
 	}
 	 public void ParseTargetEMF(EObject Root ) {
 		 EList<EObject> AllExpression =Root.eContents();
-		 //System.out.println(AllExpression);
 		 for (EObject  oneExpression : AllExpression) {
 			 String nameExpression= name(oneExpression);
-			 //System.out.println(HashtableAllAttribute(oneExpression));
 		 }
 	 }
 	//Make a list for errors to print it later 
@@ -395,16 +382,10 @@ public class Test {
 			//case 1 : Adding
 			if (nameQueryExpression.equals("Add")) {
 				System.out.println("-----------------------------------" + " Start Operation ' "+ nameQueryExpression +" '-----------------------------------");
-				
-				//System.out.println("------------- " + nameKeyword +"   ----------");
 				attributeValue = HashtableAllAttribute(keyword);
 				//case 1.1 : Eclass
 				if(nameKeyword.equals("Eclass")) {
 					//Get all the attributes of the keyword and their values
-					//GetAllAttribute(keyword);	
-					
-					
-					//System.out.println(attributeValue);
 					AddElement_Attribut(attributeValue);
 					
 					if(ExistEclass(attributeValue) == "Exists") {
@@ -412,22 +393,13 @@ public class Test {
 					EList<EObject> listE = keyword.eContents();
 					  if ( listE != null) {
 						  for (EObject eatt : listE) {
-				
-							  attributeValueL = HashtableAllAttribute(eatt);
-							
-							  
-							 
-									//System.out.println(object.eClass().getEAllAttributes());
-									//System.out.println(object.eClass().getEAttributes());
-									//What is the difference between getEAllAttributes() , getEAttributes()
-									
+							  		attributeValueL = HashtableAllAttribute(eatt);
 									Hashtable e = new Hashtable();
 									e.put("name",attributeValueL.get("type"));
 									if(ExistEattribute(e)=="NotExists") {
 										System.out.println("#####################  "+e.get("name")+"  Doesn't exists , No changes made #######################");
 									}
 									else {
-										
 											EAttribute att = (EAttribute) object.eClass().getEStructuralFeature(eAttChosen.getName());
 											String va=(String) attributeValueL.get("name");
 											//obj might be null 
@@ -528,10 +500,6 @@ public class Test {
 					
 					//Get all the attributes of the keyword and their values
 					//GetAllAttribute(keyword);
-					
-					
-					
-				    
 				     if(ExistEclass(attributeValueM) == "NotExists") {
 				    	 System.out.println("#####################  "+attributeValueM.get("name")+"  Doesn't exists , No changes made #######################");
 						}
@@ -569,7 +537,7 @@ public class Test {
 					//GetAllAttribute(keyword);
 					//Modify the object in the  target model
 					//Check if the object exists in the target model
-					System.out.println(attributeValueM);
+					//System.out.println(attributeValueM);
 					Hashtable ecl = new Hashtable();
 					ecl.put("name",attributeValueM.get("from"));
 					if(ExistFromName(ecl)=="NotExists") {
@@ -600,14 +568,9 @@ public class Test {
 								 
 								object.eSet(att, value);
 								saveResource();
-								
 							}
-							
-							
 						}
-					}
-					
-					
+					}	
 				}
 				
 			}
@@ -621,8 +584,6 @@ public class Test {
 					//GetAllAttribute(keyword);
 					//Delete the object in the  target model
 					//Check if the object exists in the target model
-					
-					
 					if(ExistEclass(attributeValueD) == "NotExists") {
 						System.out.println("#####################  "+attributeValueD.get("name")+"  Doesn't exists , No changes made #######################");
 					}
@@ -656,17 +617,9 @@ public class Test {
 								}
 								
 							}
-							
-							
-							
-						}
-						
+						}		
 						
 					}
-					
-					
-					
-				
 				}
 				else if (nameKeyword.equals("Eattribute")) {
 					//Test if the Object "from" exists in the target model
@@ -737,20 +690,7 @@ public class Test {
 		return Type;
 	}
 	
-	
-	private void removeFromContainer(EObject object) {
-		//EObject container = object.eContainer();
-		if (objRelated != null) {
-			
-				System.out.println("eeeeeeeeeeeeeeeeelse"+object.eContainingFeature());
-				objRelated.eUnset(object.eContainingFeature());
-			
-			// recurse (because the change description may not be processed for this operation)
-			//onDelete(container, object.eContainingFeature(), object);
-			
-		}
-	}
-	
+
 	public static void GetObjectFromContainer() {
 		
 		EList<EObject> l = objRelated.eContents();
@@ -910,11 +850,7 @@ public class Test {
 		    t.ParseEMF(modelRoot);
 			
 			//t.ParseTargetEMF(ChangeRoot);
-			
-			//System.out.println("--------------------------------------------test"+EOBJECT.eContents());
-			
-			
-			
+		    
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
